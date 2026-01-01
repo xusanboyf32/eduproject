@@ -1,0 +1,481 @@
+{% load static %}
+<!-- CSS Styles -->
+<style>
+    #ai-chat-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 380px;
+        z-index: 9999;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    #chat-toggle-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 14px 20px;
+        border-radius: 25px;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        font-size: 16px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    #chat-toggle-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    #chat-window {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        margin-top: 10px;
+        overflow: hidden;
+        display: none;
+        height: 500px;
+        flex-direction: column;
+    }
+
+    .chat-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .chat-messages {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        background: #f8f9fa;
+    }
+
+    .message {
+        margin-bottom: 15px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .user-message {
+        align-items: flex-end;
+    }
+
+    .ai-message {
+        align-items: flex-start;
+    }
+
+    .message-bubble {
+        max-width: 80%;
+        padding: 12px 16px;
+        border-radius: 18px;
+        word-wrap: break-word;
+        line-height: 1.4;
+    }
+
+    .user-bubble {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-bottom-right-radius: 5px;
+    }
+
+    .ai-bubble {
+        background: white;
+        color: #333;
+        border: 1px solid #e0e0e0;
+        border-bottom-left-radius: 5px;
+    }
+
+    .message-time {
+        font-size: 11px;
+        color: #999;
+        margin-top: 4px;
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+
+    .chat-input-area {
+        padding: 15px;
+        border-top: 1px solid #eee;
+        background: white;
+        display: flex;
+        gap: 10px;
+    }
+
+    #user-input {
+        flex: 1;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 25px;
+        font-size: 14px;
+        outline: none;
+        transition: border 0.3s;
+    }
+
+    #user-input:focus {
+        border-color: #667eea;
+    }
+
+    #send-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 45px;
+        height: 45px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+    }
+
+    #send-btn:hover:not(:disabled) {
+        transform: scale(1.05);
+    }
+
+    #send-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .typing-indicator {
+        display: none;
+        padding: 10px 15px;
+        background: white;
+        border-radius: 18px;
+        border: 1px solid #e0e0e0;
+        margin-bottom: 15px;
+        width: fit-content;
+    }
+
+    .typing-dots {
+        display: flex;
+        gap: 4px;
+    }
+
+    .typing-dots span {
+        width: 8px;
+        height: 8px;
+        background: #667eea;
+        border-radius: 50%;
+        animation: typing 1.4s infinite;
+    }
+
+    .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typing {
+        0%, 60%, 100% { transform: translateY(0); }
+        30% { transform: translateY(-5px); }
+    }
+
+    .chat-controls {
+        padding: 10px 15px;
+        border-top: 1px solid #eee;
+        background: #f8f9fa;
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: #666;
+    }
+
+    .clear-btn {
+        background: none;
+        border: none;
+        color: #ff6b6b;
+        cursor: pointer;
+        font-size: 12px;
+    }
+
+    .clear-btn:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<!-- HTML Structure -->
+<div id="ai-chat-container">
+    <button id="chat-toggle-btn" onclick="toggleChat()">
+        <span>🤖 AI Yordamchi</span>
+        <span id="unread-indicator" style="display:none;">🔴</span>
+    </button>
+
+    <div id="chat-window">
+        <div class="chat-header">
+            <strong>AI Assistant</strong>
+            <button onclick="toggleChat()" style="background:none;border:none;color:white;cursor:pointer;">✕</button>
+        </div>
+
+        <div class="chat-messages" id="chat-messages">
+            <!-- Messages will appear here -->
+            <div class="message ai-message">
+                <div class="message-bubble ai-bubble">
+                    Salom! Men AI yordamchiman. Savolingiz bo'lsa, menga yozing!
+                </div>
+                <div class="message-time">Hozir</div>
+            </div>
+        </div>
+
+        <div class="typing-indicator" id="typing-indicator">
+            <div class="typing-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+
+        <div class="chat-input-area">
+            <input type="text"
+                   id="user-input"
+                   placeholder="Savolingizni yozing..."
+                   onkeypress="if(event.key === 'Enter') sendMessage()">
+            <button id="send-btn" onclick="sendMessage()">➤</button>
+        </div>
+
+        <div class="chat-controls">
+            <span id="session-info">Session: <span id="session-id-display"></span></span>
+            <button class="clear-btn" onclick="clearHistory()">Tarixni tozalash</button>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    // Global o'zgaruvchilar
+    let chatOpen = false;
+    let sessionId = 'session_' + Math.random().toString(36).substring(2, 15);
+    let messageCount = 0;
+
+    // CSRF token ni olish
+    function getCSRFToken() {
+        let token = '';
+
+        // 1. Cookie dan olish
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            const [name, value] = cookie.trim().split('=');
+            if (name === 'csrftoken') {
+                token = value;
+                break;
+            }
+        }
+
+        // 2. Meta tag dan olish
+        if (!token) {
+            const metaToken = document.querySelector('meta[name="csrf-token"]');
+            if (metaToken) {
+                token = metaToken.getAttribute('content');
+            }
+        }
+
+        return token;
+    }
+
+    const csrfToken = getCSRFToken();
+
+    // DOM yuklanganda
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('session-id-display').textContent = sessionId.substring(0, 8) + '...';
+
+        // Avvalgi session ni restore qilish
+        const savedSession = localStorage.getItem('ai_chat_session');
+        if (savedSession) {
+            try {
+                const sessionData = JSON.parse(savedSession);
+                sessionId = sessionData.id || sessionId;
+                if (sessionData.lastOpened && (Date.now() - sessionData.lastOpened) < 3600000) {
+                    loadHistory();
+                }
+            } catch (e) {
+                console.log('Session restore xatosi:', e);
+            }
+        }
+
+        // Session ni saqlash
+        localStorage.setItem('ai_chat_session', JSON.stringify({
+            id: sessionId,
+            lastOpened: Date.now()
+        }));
+    });
+
+    // Chatni ochib-yopish
+    function toggleChat() {
+        const chatWindow = document.getElementById('chat-window');
+        chatOpen = !chatOpen;
+
+        if (chatOpen) {
+            chatWindow.style.display = 'flex';
+            document.getElementById('user-input').focus();
+            loadHistory();
+
+            // Unread indikatorni o'chirish
+            document.getElementById('unread-indicator').style.display = 'none';
+        } else {
+            chatWindow.style.display = 'none';
+        }
+    }
+
+    // Tarixni yuklash
+    async function loadHistory() {
+        try {
+            const response = await fetch(`/ai/history/${sessionId}/`);
+            const data = await response.json();
+
+            if (data.success && data.history.length > 0) {
+                const messagesDiv = document.getElementById('chat-messages');
+                messagesDiv.innerHTML = '';
+
+                data.history.forEach(msg => {
+                    addMessage(msg.user, 'user', msg.time);
+                    addMessage(msg.ai, 'ai', msg.time);
+                });
+
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
+        } catch (error) {
+            console.error('Tarix yuklash xatosi:', error);
+        }
+    }
+
+    // Xabar qo'shish
+    function addMessage(text, sender, time = null) {
+        const messagesDiv = document.getElementById('chat-messages');
+        const messageDiv = document.createElement('div');
+
+        const now = new Date();
+        const displayTime = time || `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+        messageDiv.className = `message ${sender}-message`;
+        messageDiv.innerHTML = `
+            <div class="message-bubble ${sender}-bubble">${text}</div>
+            <div class="message-time">${displayTime}</div>
+        `;
+
+        messagesDiv.appendChild(messageDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+        messageCount++;
+    }
+
+    // Xabar yuborish
+    async function sendMessage() {
+        const input = document.getElementById('user-input');
+        const message = input.value.trim();
+        const sendBtn = document.getElementById('send-btn');
+
+        if (!message) return;
+
+        // UI ni bloklash
+        input.disabled = true;
+        sendBtn.disabled = true;
+
+        // Foydalanuvchi xabarini ko'rsatish
+        addMessage(message, 'user');
+        input.value = '';
+
+        // Typing indikatorni ko'rsatish
+        const typingIndicator = document.getElementById('typing-indicator');
+        typingIndicator.style.display = 'block';
+        document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
+
+        try {
+            // API ga so'rov
+            const response = await fetch('/ai/api/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({
+                    message: message,
+                    session_id: sessionId
+                })
+            });
+
+            const data = await response.json();
+
+            // Typing indikatorni yashirish
+            typingIndicator.style.display = 'none';
+
+            if (data.success) {
+                addMessage(data.response, 'ai');
+            } else {
+                addMessage(`❌ Xato: ${data.error || 'Noma\'lum xato'}`, 'ai');
+            }
+
+        } catch (error) {
+            typingIndicator.style.display = 'none';
+            addMessage('❌ Internet aloqasi xatosi. Iltimos, qayta urinib ko\'ring.', 'ai');
+            console.error('Xabar yuborish xatosi:', error);
+        } finally {
+            // UI ni qayta faollashtirish
+            input.disabled = false;
+            sendBtn.disabled = false;
+            input.focus();
+        }
+    }
+
+    // Tarixni tozalash
+    async function clearHistory() {
+        if (!confirm('Haqiqatan ham barcha suhbat tarixini o\'chirmoqchimisiz?')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/ai/clear/${sessionId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Chatni tozalash
+                document.getElementById('chat-messages').innerHTML = `
+                    <div class="message ai-message">
+                        <div class="message-bubble ai-bubble">
+                            Tarix tozalandi. Yangi suhbatni boshlashingiz mumkin!
+                        </div>
+                        <div class="message-time">Hozir</div>
+                    </div>
+                `;
+
+                // Yangi session ID yaratish
+                sessionId = 'session_' + Math.random().toString(36).substring(2, 15);
+                document.getElementById('session-id-display').textContent = sessionId.substring(0, 8) + '...';
+
+                // LocalStorage ni yangilash
+                localStorage.setItem('ai_chat_session', JSON.stringify({
+                    id: sessionId,
+                    lastOpened: Date.now()
+                }));
+
+                alert('Tarix muvaffaqiyatli tozalandi!');
+            } else {
+                alert('Xato: ' + data.error);
+            }
+        } catch (error) {
+            alert('Serverga ulanib bo\'lmadi');
+            console.error('Tarixni tozalash xatosi:', error);
+        }
+    }
+
+    // Avtomatik ochish (faqat birinchi marta)
+    setTimeout(() => {
+        if (!localStorage.getItem('ai_chat_first_open')) {
+            localStorage.setItem('ai_chat_first_open', 'true');
+            if (!chatOpen) {
+                toggleChat();
+            }
+        }
+    }, 3000);
+</script>

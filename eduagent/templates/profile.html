@@ -1,0 +1,285 @@
+{% extends 'base.html' %}
+
+{% block title %}Profil - EduAgent{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <div class="position-relative d-inline-block mb-3">
+                        <img src="{{ user.profile.avatar.url|default:'/static/images/default-avatar.png' }}" 
+                             class="rounded-circle img-thumbnail" alt="Profile" style="width: 150px; height: 150px; object-fit: cover;">
+                        <button class="btn btn-primary btn-sm position-absolute bottom-0 end-0 rounded-circle" 
+                                style="width: 36px; height: 36px;" data-bs-toggle="modal" data-bs-target="#avatarModal">
+                            <i class="fas fa-camera"></i>
+                        </button>
+                    </div>
+                    <h4 class="mb-1">{{ user.get_full_name|default:user.username }}</h4>
+                    <p class="text-muted mb-2">@{{ user.username }}</p>
+                    {% if user.profile.bio %}
+                        <p class="mb-3">{{ user.profile.bio }}</p>
+                    {% else %}
+                        <p class="text-muted mb-3">Bio qo'shilmagan</p>
+                    {% endif %}
+                    <div class="d-flex justify-content-center mb-2">
+                        <button type="button" class="btn btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                            <i class="fas fa-edit me-1"></i> Tahrirlash
+                        </button>
+                        <a href="{% url 'password_change' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-key me-1"></i> Parolni o'zgartirish
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Shaxsiy ma'lumotlar</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="fas fa-envelope me-2 text-muted"></i>
+                            {{ user.email|default:"Email qo'shilmagan" }}
+                        </li>
+                        {% if user.profile.phone %}
+                        <li class="mb-2">
+                            <i class="fas fa-phone me-2 text-muted"></i>
+                            {{ user.profile.phone }}
+                        </li>
+                        {% endif %}
+                        {% if user.profile.birth_date %}
+                        <li class="mb-2">
+                            <i class="fas fa-birthday-cake me-2 text-muted"></i>
+                            {{ user.profile.birth_date|date:"d.m.Y" }} yil
+                        </li>
+                        {% endif %}
+                        {% if user.profile.location %}
+                        <li class="mb-2">
+                            <i class="fas fa-map-marker-alt me-2 text-muted"></i>
+                            {{ user.profile.location }}
+                        </li>
+                        {% endif %}
+                        <li>
+                            <i class="fas fa-calendar-alt me-2 text-muted"></i>
+                            A'zo bo'lgan sana: {{ user.date_joined|date:"d.m.Y" }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Faollik tarixi</h5>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-secondary btn-sm active">Kunlik</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm">Haftalik</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm">Oylik</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" style="position: relative; height: 300px;">
+                        <!-- Activity chart will be rendered here -->
+                        <canvas id="activityChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">So'ngi faolliklar</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for activity in recent_activities %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ activity.title }}</h6>
+                                <small class="text-muted">{{ activity.timestamp|timesince }} oldin</small>
+                            </div>
+                            <p class="mb-1">{{ activity.description }}</p>
+                            <small class="text-muted">{{ activity.course }}</small>
+                        </div>
+                        {% empty %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                            <p class="text-muted mb-0">Hozircha faollik mavjud emas</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="card-footer text-end">
+                    <a href="#" class="btn btn-link btn-sm">Barcha faolliklar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editProfileModalLabel">Profilni tahrirlash</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="id_first_name" class="form-label">Ism</label>
+                        <input type="text" class="form-control" id="id_first_name" name="first_name" 
+                               value="{{ user.first_name }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_last_name" class="form-label">Familiya</label>
+                        <input type="text" class="form-control" id="id_last_name" name="last_name" 
+                               value="{{ user.last_name }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_email" class="form-label">Email manzil</label>
+                        <input type="email" class="form-control" id="id_email" name="email" 
+                               value="{{ user.email }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_bio" class="form-label">Bio</label>
+                        <textarea class="form-control" id="id_bio" name="bio" rows="3">{{ user.profile.bio }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_phone" class="form-label">Telefon raqam</label>
+                        <input type="tel" class="form-control" id="id_phone" name="phone" 
+                               value="{{ user.profile.phone|default:'' }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_location" class="form-label">Manzil</label>
+                        <input type="text" class="form-control" id="id_location" name="location" 
+                               value="{{ user.profile.location|default:'' }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_birth_date" class="form-label">Tug'ilgan sana</label>
+                        <input type="date" class="form-control" id="id_birth_date" name="birth_date" 
+                               value="{{ user.profile.birth_date|date:'Y-m-d' }}">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                    <button type="submit" class="btn btn-primary">Saqlash</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Change Avatar Modal -->
+<div class="modal fade" id="avatarModal" tabindex="-1" aria-labelledby="avatarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="avatarModalLabel">Profil rasmini o'zgartirish</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="mb-3">
+                        <div class="position-relative d-inline-block">
+                            <img id="avatarPreview" src="{{ user.profile.avatar.url|default:'/static/images/default-avatar.png' }}" 
+                                 class="img-fluid rounded-circle mb-3" style="width: 200px; height: 200px; object-fit: cover;" alt="Preview">
+                        </div>
+                        <div class="d-flex justify-content-center">
+                            <div class="btn-group" role="group">
+                                <input type="file" class="d-none" id="id_avatar" name="avatar" accept="image/*">
+                                <label for="id_avatar" class="btn btn-outline-primary">
+                                    <i class="fas fa-upload me-1"></i> Rasm tanlash
+                                </label>
+                                <button type="button" id="removeAvatar" class="btn btn-outline-danger">
+                                    <i class="fas fa-trash me-1"></i> O'chirish
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-text mt-2">Rasm hajmi 2 MB dan oshmasin. Ruxsat etilgan formatlar: JPG, PNG, WEBP.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                    <button type="submit" class="btn btn-primary">Saqlash</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+// Avatar preview
+const avatarInput = document.getElementById('id_avatar');
+const avatarPreview = document.getElementById('avatarPreview');
+const removeAvatarBtn = document.getElementById('removeAvatar');
+
+if (avatarInput) {
+    avatarInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                avatarPreview.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+}
+
+if (removeAvatarBtn) {
+    removeAvatarBtn.addEventListener('click', function() {
+        avatarPreview.src = '{% static "images/default-avatar.png" %}';
+        if (avatarInput) {
+            avatarInput.value = '';
+        }
+    });
+}
+
+// Activity Chart
+const ctx = document.getElementById('activityChart');
+if (ctx) {
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Dush', 'Sesh', 'Chor', 'Pay', 'Juma', 'Shan', 'Yak'],
+            datasets: [{
+                label: 'Faollik',
+                data: [12, 19, 3, 5, 2, 3, 8],
+                backgroundColor: 'rgba(13, 110, 253, 0.5)',
+                borderColor: 'rgba(13, 110, 253, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+}
+</script>
+{% endblock %}

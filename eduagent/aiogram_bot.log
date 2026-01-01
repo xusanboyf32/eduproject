@@ -1,0 +1,39 @@
+2025-12-20 00:03:13,699 - __main__ - INFO - ✅ Database connection pool initialized
+2025-12-20 00:03:13,822 - __main__ - INFO - ✅ Database tables created/verified
+2025-12-20 00:03:13,822 - __main__ - INFO - 🚀 Aiogram Bot starting...
+2025-12-20 00:03:13,822 - __main__ - INFO - ✅ Redis storage connected
+2025-12-20 00:03:15,025 - aiogram.dispatcher - INFO - Start polling
+2025-12-20 00:03:15,227 - aiogram.dispatcher - INFO - Run polling for bot @xmuasf_bot id=7880598816 - 'f31_bot'
+2025-12-20 00:03:41,438 - __main__ - INFO - 🚀 Start from user 6955375039 - Xusanboy
+2025-12-20 00:03:42,166 - aiogram.event - INFO - Update id=386128904 is handled. Duration 2765 ms by bot id=7880598816
+2025-12-20 00:03:49,666 - aiogram.event - INFO - Update id=386128905 is handled. Duration 625 ms by bot id=7880598816
+2025-12-20 00:04:25,383 - __main__ - INFO - 🚀 Start from user 6955375039 - Xusanboy
+2025-12-20 00:04:25,690 - aiogram.event - INFO - Update id=386128906 is handled. Duration 311 ms by bot id=7880598816
+2025-12-20 00:04:28,669 - aiogram.event - INFO - Update id=386128907 is handled. Duration 735 ms by bot id=7880598816
+2025-12-20 00:04:36,558 - aiogram.event - INFO - Update id=386128908 is not handled. Duration 0 ms by bot id=7880598816
+2025-12-20 00:04:39,712 - __main__ - INFO - 🚀 Start from user 6955375039 - Xusanboy
+2025-12-20 00:04:39,916 - aiogram.event - INFO - Update id=386128909 is handled. Duration 202 ms by bot id=7880598816
+2025-12-20 00:04:43,677 - aiogram.event - INFO - Update id=386128910 is handled. Duration 688 ms by bot id=7880598816
+2025-12-20 00:07:25,490 - aiogram.event - INFO - Update id=386128911 is not handled. Duration 0 ms by bot id=7880598816
+2025-12-20 00:07:39,310 - __main__ - INFO - 🚀 Start from user 6955375039 - Xusanboy
+2025-12-20 00:07:39,622 - aiogram.event - INFO - Update id=386128912 is handled. Duration 313 ms by bot id=7880598816
+2025-12-20 00:07:44,437 - aiogram.event - INFO - Update id=386128913 is handled. Duration 405 ms by bot id=7880598816
+2025-12-20 00:08:48,052 - aiogram.dispatcher - INFO - Polling stopped
+2025-12-20 00:08:48,054 - aiogram.dispatcher - ERROR - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ServerDisconnectedError: Server disconnected
+2025-12-20 00:08:48,054 - aiogram.dispatcher - WARNING - Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 7880598816)
+2025-12-20 00:08:48,316 - aiogram.dispatcher - INFO - Polling stopped for bot @xmuasf_bot id=7880598816 - 'f31_bot'
+2025-12-20 00:08:48,324 - __main__ - INFO - 👋 Bot to'xtatildi.
+2025-12-20 01:09:10,782 - __main__ - INFO - ✅ Database connection pool initialized
+2025-12-20 01:09:10,820 - __main__ - INFO - ✅ Database tables created/verified
+2025-12-20 01:09:10,820 - __main__ - INFO - 🚀 Aiogram Bot starting...
+2025-12-20 01:09:10,821 - __main__ - INFO - ✅ Redis storage connected
+2025-12-20 01:09:11,599 - aiogram.dispatcher - INFO - Start polling
+2025-12-20 01:09:11,797 - aiogram.dispatcher - INFO - Run polling for bot @xmuasf_bot id=7880598816 - 'f31_bot'
+2025-12-20 01:09:29,415 - __main__ - INFO - 🚀 Start from user 6955375039 - Xusanboy
+2025-12-20 01:09:30,134 - aiogram.event - INFO - Update id=386128920 is handled. Duration 2765 ms by bot id=7880598816
+2025-12-20 01:09:32,898 - aiogram.event - INFO - Update id=386128921 is handled. Duration 311 ms by bot id=7880598816
+2025-12-20 01:10:39,125 - aiogram.dispatcher - INFO - Polling stopped
+2025-12-20 01:10:39,127 - aiogram.dispatcher - ERROR - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ServerDisconnectedError: Server disconnected
+2025-12-20 01:10:39,127 - aiogram.dispatcher - WARNING - Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 7880598816)
+2025-12-20 01:10:39,388 - aiogram.dispatcher - INFO - Polling stopped for bot @xmuasf_bot id=7880598816 - 'f31_bot'
+2025-12-20 01:10:39,391 - __main__ - INFO - 👋 Bot to'xtatildi.

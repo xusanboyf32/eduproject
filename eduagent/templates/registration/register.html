@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+
+{% block title %}Ro'yxatdan o'tish - EduAgent{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow">
+            <div class="card-body p-5">
+                <h2 class="card-title text-center mb-4">Yangi hisob yaratish</h2>
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="id_first_name" class="form-label">Ism</label>
+                            <input type="text" name="first_name" class="form-control {% if form.first_name.errors %}is-invalid{% endif %}" 
+                                   id="id_first_name" value="{{ form.first_name.value|default:'' }}" required>
+                            {% if form.first_name.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.first_name.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="id_last_name" class="form-label">Familiya</label>
+                            <input type="text" name="last_name" class="form-control {% if form.last_name.errors %}is-invalid{% endif %}" 
+                                   id="id_last_name" value="{{ form.last_name.value|default:'' }}" required>
+                            {% if form.last_name.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.last_name.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">Foydalanuvchi nomi</label>
+                        <div class="input-group">
+                            <span class="input-group-text">@</span>
+                            <input type="text" name="username" class="form-control {% if form.username.errors %}is-invalid{% endif %}" 
+                                   id="id_username" value="{{ form.username.value|default:'' }}" required>
+                            {% if form.username.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.username.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-text">Harflar, raqamlar va @/./+/-/_ belgilari qo'llanilishi mumkin.</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_email" class="form-label">Elektron pochta</label>
+                        <input type="email" name="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}" 
+                               id="id_email" value="{{ form.email.value|default:'' }}" required>
+                        {% if form.email.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.email.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_password1" class="form-label">Parol</label>
+                        <div class="input-group">
+                            <input type="password" name="password1" class="form-control {% if form.password1.errors %}is-invalid{% endif %}" 
+                                   id="id_password1" required>
+                            <button class="btn btn-outline-secondary toggle-password" type="button" data-target="id_password1">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            {% if form.password1.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.password1.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-text">
+                            <ul class="list-unstyled small">
+                                <li id="length" class="text-muted">
+                                    <i class="fas fa-circle-xmark me-1"></i> Kamida 8 ta belgi
+                                </li>
+                                <li id="number" class="text-muted">
+                                    <i class="fas fa-circle-xmark me-1"></i> Kamida 1 ta raqam
+                                </li>
+                                <li id="uppercase" class="text-muted">
+                                    <i class="fas fa-circle-xmark me-1"></i> Kamida 1 ta bosh harf
+                                </li>
+                                <li id="special" class="text-muted">
+                                    <i class="fas fa-circle-xmark me-1"></i> Kamida 1 ta maxsus belgi
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="id_password2" class="form-label">Parolni tasdiqlang</label>
+                        <div class="input-group">
+                            <input type="password" name="password2" class="form-control {% if form.password2.errors %}is-invalid{% endif %}" 
+                                   id="id_password2" required>
+                            <button class="btn btn-outline-secondary toggle-password" type="button" data-target="id_password2">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            {% if form.password2.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.password2.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="form-check mb-4">
+                        <input class="form-check-input {% if form.terms.errors %}is-invalid{% endif %}" type="checkbox" 
+                               name="terms" id="id_terms" required>
+                        <label class="form-check-label" for="id_terms">
+                            Men <a href="#" class="text-decoration-none">foydalanish shartlari</a> va 
+                            <a href="#" class="text-decoration-none">maxfiylik siyosati</a>ga roziman
+                        </label>
+                        {% if form.terms.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.terms.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100 py-2">Ro'yxatdan o'tish</button>
+                    
+                    <div class="text-center mt-3">
+                        <p class="mb-0">Allaqachon hisobingiz bormi? 
+                            <a href="{% url 'login' %}" class="text-decoration-none">Tizimga kirish</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Toggle password visibility
+const toggleButtons = document.querySelectorAll('.toggle-password');
+toggleButtons.forEach(button => {
+    button.addEventListener('click', function() {
+        const targetId = this.getAttribute('data-target');
+        const passwordInput = document.getElementById(targetId);
+        const icon = this.querySelector('i');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    });
+});
+
+// Password strength checker
+const password1 = document.getElementById('id_password1');
+const requirements = {
+    length: document.getElementById('length'),
+    number: document.getElementById('number'),
+    uppercase: document.getElementById('uppercase'),
+    special: document.getElementById('special')
+};
+
+if (password1) {
+    password1.addEventListener('input', function() {
+        const value = this.value;
+        const hasLength = value.length >= 8;
+        const hasNumber = /[0-9]/.test(value);
+        const hasUppercase = /[A-Z]/.test(value);
+        const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(value);
+        
+        updateRequirement('length', hasLength);
+        updateRequirement('number', hasNumber);
+        updateRequirement('uppercase', hasUppercase);
+        updateRequirement('special', hasSpecial);
+    });
+}
+
+function updateRequirement(requirement, isValid) {
+    const element = requirements[requirement];
+    if (isValid) {
+        element.classList.remove('text-muted');
+        element.classList.add('text-success');
+        element.querySelector('i').classList.remove('fa-circle-xmark', 'text-muted');
+        element.querySelector('i').classList.add('fa-circle-check', 'text-success');
+    } else {
+        element.classList.remove('text-success');
+        element.classList.add('text-muted');
+        element.querySelector('i').classList.remove('fa-circle-check', 'text-success');
+        element.querySelector('i').classList.add('fa-circle-xmark', 'text-muted');
+    }
+}
+
+// Form validation
+(function () {
+    'use strict'
+    const forms = document.querySelectorAll('.needs-validation')
+    Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    })
+})()
+</script>
+{% endblock %}
